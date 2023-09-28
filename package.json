@@ -1,0 +1,187 @@
+{
+  "name": "unicon-debugger",
+  "displayName": "Unicon Debugger",
+  "description": "Debugger extension for Unicon",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Debuggers"
+  ],
+  "activationEvents": [
+    "onDebug",
+    "onDebugDynamicConfigurations:unicon-debugger"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "unicon-debugger.debugEditorContents",
+        "title": "Debug File",
+        "icon": "$(debug-alt)",
+        "category": "Unicon"
+      },
+      {
+        "command": "unicon-debugger.runEditorContents",
+        "title": "Run File",
+        "icon": "$(play)",
+        "category": "Unicon"
+      },
+      {
+        "command": "unicon-debugger.attach",
+        "title": "Attach to Unicon",
+        "icon": "$(debug-alt)",
+        "category": "Unicon"
+      }
+    ],
+    "breakpoints": [
+      {
+        "language": "unicon"
+      }
+    ],
+    "languages": [
+      {
+        "id": "unicon",
+        "extensions": [
+          ".icn"
+        ]
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "unicon-debugger",
+        "label": "Unicon Debugger",
+        "configurationAttributes": {
+          "attach": {
+            "required": [
+              "port"
+            ],
+            "properties": {
+              "port": {
+                "type": "number",
+                "description": "Port on which to attach to Unicon.",
+                "default": 4711
+              },
+              "additionalSrcFolders": {
+                "type": "string",
+                "description": "Additional folders to search for source files separated by semi-colons."
+              },
+              "host": {
+                "type": "string",
+                "description": "The hostname to connect to."
+              }
+            }
+          },
+          "launch": {
+            "required": [
+              "program",
+              "port"
+            ],
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "Absolute path to a program file.",
+                "default": "${workspaceFolder}/${command:AskForProgramName}"
+              },
+              "port": {
+                "type": "number",
+                "description": "Port on which to connect to Unicon.",
+                "default": 4711
+              },
+              "stopOnEntry": {
+                "type": "boolean",
+                "description": "Automatically stop after launch.",
+                "default": true
+              },
+              "additionalSrcFolders": {
+                "type": "string",
+                "description": "Additional folders to search for source files; separated by semi-colons."
+              },
+              "uniconPath": {
+                "type": "string"
+              },
+              "host": {
+                "type": "string",
+                "description": "The hostname to connect to."
+              }
+            }
+          }
+        },
+        "initialConfigurations": [
+          {
+            "type": "unicon-debugger",
+            "request": "launch",
+            "name": "Launch in Unicon",
+            "program": "^\"\\${file}\"",
+            "port": 4711,
+            "stopOnEntry": true
+          }
+        ],
+        "configurationSnippets": [
+          {
+            "label": "Unicon: Attach",
+            "body": {
+              "type": "unicon-debugger",
+              "request": "attach",
+              "name": "Attach to Unicon",
+              "port": 4711
+            }
+          },
+          {
+            "label": "Unicon: Launch",
+            "body": {
+              "type": "unicon-debugger",
+              "request": "launch",
+              "name": "Launch in Unicon",
+              "program": "^\"\\${file}\"",
+              "port": 4711,
+              "stopOnEntry": true
+            }
+          }
+        ],
+        "variables": {
+          "AskForProgramName": "unicon-debugger.getProgramName"
+        }
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Unicon Debugger",
+      "properties": {
+        "unicon-debugger.emuliciousPath": {
+          "type": "string",
+          "default": ""
+        },
+        "unicon-debugger.maxAttempts": {
+          "type": "number",
+          "default": 25
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "dependencies": {
+    "vscode-debugadapter": "^1.41.1"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.82.0",
+    "@typescript-eslint/eslint-plugin": "^6.4.1",
+    "@typescript-eslint/parser": "^6.4.1",
+    "@vscode/test-electron": "^2.3.4",
+    "eslint": "^8.47.0",
+    "glob": "^10.3.3",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  }
+}
