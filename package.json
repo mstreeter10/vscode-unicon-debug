@@ -27,12 +27,6 @@
         "title": "Run File",
         "icon": "$(play)",
         "category": "Unicon"
-      },
-      {
-        "command": "unicon-debugger.attach",
-        "title": "Attach to Unicon",
-        "icon": "$(debug-alt)",
-        "category": "Unicon"
       }
     ],
     "breakpoints": [
@@ -53,41 +47,15 @@
         "type": "unicon-debugger",
         "label": "Unicon Debugger",
         "configurationAttributes": {
-          "attach": {
-            "required": [
-              "port"
-            ],
-            "properties": {
-              "port": {
-                "type": "number",
-                "description": "Port on which to attach to Unicon.",
-                "default": 4711
-              },
-              "additionalSrcFolders": {
-                "type": "string",
-                "description": "Additional folders to search for source files separated by semi-colons."
-              },
-              "host": {
-                "type": "string",
-                "description": "The hostname to connect to."
-              }
-            }
-          },
           "launch": {
             "required": [
-              "program",
-              "port"
+              "program"
             ],
             "properties": {
               "program": {
                 "type": "string",
                 "description": "Absolute path to a program file.",
                 "default": "${workspaceFolder}/${command:AskForProgramName}"
-              },
-              "port": {
-                "type": "number",
-                "description": "Port on which to connect to Unicon.",
-                "default": 4711
               },
               "stopOnEntry": {
                 "type": "boolean",
@@ -114,35 +82,9 @@
             "request": "launch",
             "name": "Launch in Unicon",
             "program": "^\"\\${file}\"",
-            "port": 4711,
             "stopOnEntry": true
           }
-        ],
-        "configurationSnippets": [
-          {
-            "label": "Unicon: Attach",
-            "body": {
-              "type": "unicon-debugger",
-              "request": "attach",
-              "name": "Attach to Unicon",
-              "port": 4711
-            }
-          },
-          {
-            "label": "Unicon: Launch",
-            "body": {
-              "type": "unicon-debugger",
-              "request": "launch",
-              "name": "Launch in Unicon",
-              "program": "^\"\\${file}\"",
-              "port": 4711,
-              "stopOnEntry": true
-            }
-          }
-        ],
-        "variables": {
-          "AskForProgramName": "unicon-debugger.getProgramName"
-        }
+        ]
       }
     ],
     "configuration": {
@@ -169,6 +111,7 @@
     "test": "node ./out/test/runTest.js"
   },
   "dependencies": {
+    "kill-port": "^2.0.1",
     "vscode-debugadapter": "^1.41.1"
   },
   "devDependencies": {

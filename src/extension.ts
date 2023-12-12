@@ -4,47 +4,18 @@ import * as vscode from 'vscode';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
 import * as child_process from 'child_process';
 
-const DEFAULT_PORT = 4711;
+function getRandomInt(min: number, max: number) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
+}
+
+let DEFAULT_PORT: number;
 let unicon: child_process.ChildProcessWithoutNullStreams;
 
 export function activate(context: vscode.ExtensionContext) {
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand('unicon-debugger.runEditorContents', (resource: vscode.Uri) => {
-			vscode.debug.startDebugging(undefined, {
-				type: 'unicon-debugger',
-				name: 'Run Editor Contents',
-				request: 'launch',
-				program: resource.fsPath,
-				noDebug: true,
-				port: DEFAULT_PORT
-			});
-		}),
-		vscode.commands.registerCommand('unicon-debugger.debugEditorContents', (resource: vscode.Uri) => {
-			vscode.debug.startDebugging(undefined, {
-				type: 'unicon-debugger',
-				name: 'Debug Editor Contents',
-				request: 'launch',
-				program: resource.fsPath,
-				port: DEFAULT_PORT,
-				stopOnEntry: true
-			});
-		}),
-		vscode.commands.registerCommand('unicon-debugger.attach', () => {
-			vscode.debug.startDebugging(undefined, {
-				type: 'unicon-debugger',
-				name: 'Attach to Unicon',
-				request: 'attach',
-				port: DEFAULT_PORT
-			});
-		})
-	);
-
-	context.subscriptions.push(vscode.commands.registerCommand('unicon-debugger.getProgramName', config => {
-		return vscode.window.showInputBox({
-			placeHolder: "Please enter the name of a .icn file in the workspace folder"
-		});
-	}));
+	DEFAULT_PORT = getRandomInt(49152, 65505);
 
 	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('unicon-debugger', new UniconDebugConfigurationProvider()));
 	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('unicon-debugger', {
@@ -52,16 +23,9 @@ export function activate(context: vscode.ExtensionContext) {
 			return [
 				{
 					type: 'unicon-debugger',
-					name: 'Attach to Unicon',
-					request: 'attach',
-					port: DEFAULT_PORT
-				},
-				{
-					type: 'unicon-debugger',
 					name: 'Launch in Unicon',
 					request: 'launch',
 					program: '${file}',
-					port: DEFAULT_PORT
 				}
 			];
 		}
@@ -69,14 +33,14 @@ export function activate(context: vscode.ExtensionContext) {
 
 	unicon = child_process.spawn("udap", [ "--socket", DEFAULT_PORT.toString() ]);
 	unicon.stdout.on('data', (data) => {
-		console.log(`stdout: ${data}`);
+		console.log(`${data}`);
 	});
 	unicon.stderr.on('data', (data) => {
-		console.error(`stderr: ${data}`);
+		console.error(`${data}`);
 	});
 	unicon.on('close', (code) => {
-		console.log(`child process exited with code ${code}`);
-	}); 
+		console.log(`udap exited with code ${code}`);
+	});
 
 	const factory = new UniconDebugAdapterFactory();
 	context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('unicon-debugger', factory));
@@ -86,12 +50,13 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
+	const kill = require('kill-port')
+	kill(DEFAULT_PORT, 'tcp')
+	unicon.kill();
 }
 
 class UniconDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
-
 	resolveDebugConfiguration(folder: WorkspaceFolder | undefined, config: DebugConfiguration, token?: CancellationToken): ProviderResult<DebugConfiguration> {
-
 		if (!config.type && !config.request && !config.name) {
 			const editor = vscode.window.activeTextEditor;
 			if (editor && editor.document.languageId === 'unicon') {
@@ -99,18 +64,16 @@ class UniconDebugConfigurationProvider implements vscode.DebugConfigurationProvi
 				config.name = 'Launch';
 				config.request = 'launch';
 				config.program = '${file}';
-				config.port = DEFAULT_PORT;
 				config.stopOnEntry = true;
 			}
 		}
-
 		return config;
 	}
 }
 
 class UniconDebugAdapterFactory implements vscode.DebugAdapterDescriptorFactory {
 	createDebugAdapterDescriptor(session: vscode.DebugSession, _: vscode.DebugAdapterExecutable | undefined): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
-		return new vscode.DebugAdapterServer(session.configuration.port, session.configuration.host);
+		return new vscode.DebugAdapterServer(DEFAULT_PORT, session.configuration.host);
 	}
 	dispose() {
 	}
