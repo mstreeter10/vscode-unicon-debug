@@ -2,17 +2,29 @@
   "name": "unicon-debugger",
   "displayName": "Unicon Debugger",
   "description": "Debugger extension for Unicon",
-  "version": "0.0.1",
+  "author": "Unicon LSP Team",
+	"license": "MIT",
+	"version": "0.2.0",
+	"publisher": "jafar",
   "engines": {
     "vscode": "^1.82.0"
   },
   "categories": [
     "Debuggers"
   ],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Jafaral/vscode-unicon-debug.git"
+	},
   "activationEvents": [
     "onDebug",
     "onDebugDynamicConfigurations:unicon-debugger"
   ],
+  "keywords" : [
+		"Unicon",
+		"Icon",
+		"SNOBOL"
+	],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
