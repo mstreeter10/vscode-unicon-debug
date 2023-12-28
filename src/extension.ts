@@ -4,18 +4,12 @@ import * as vscode from 'vscode';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
 import * as child_process from 'child_process';
 
-function getRandomInt(min: number, max: number) {
-	min = Math.ceil(min);
-	max = Math.floor(max);
-	return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
-}
-
 let DEFAULT_PORT: number;
 let unicon: child_process.ChildProcessWithoutNullStreams;
 
 export function activate(context: vscode.ExtensionContext) {
 
-	DEFAULT_PORT = getRandomInt(49152, 65505);
+	DEFAULT_PORT = Math.floor(Math.random() * (65505 - 49152) + 49152);
 
 	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('unicon-debugger', new UniconDebugConfigurationProvider()));
 	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('unicon-debugger', {
@@ -25,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
 					type: 'unicon-debugger',
 					name: 'Launch in Unicon',
 					request: 'launch',
-					program: '${file}',
+					program: '${file}'
 				}
 			];
 		}

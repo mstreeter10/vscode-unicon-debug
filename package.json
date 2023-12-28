@@ -15,20 +15,7 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "unicon-debugger.debugEditorContents",
-        "title": "Debug File",
-        "icon": "$(debug-alt)",
-        "category": "Unicon"
-      },
-      {
-        "command": "unicon-debugger.runEditorContents",
-        "title": "Run File",
-        "icon": "$(play)",
-        "category": "Unicon"
-      }
-    ],
+    "commands": [],
     "breakpoints": [
       {
         "language": "unicon"
@@ -55,23 +42,17 @@
               "program": {
                 "type": "string",
                 "description": "Absolute path to a program file.",
-                "default": "${workspaceFolder}/${command:AskForProgramName}"
+                "default": "${file}"
               },
               "stopOnEntry": {
                 "type": "boolean",
                 "description": "Automatically stop after launch.",
                 "default": true
               },
-              "additionalSrcFolders": {
+              "args": {
                 "type": "string",
-                "description": "Additional folders to search for source files; separated by semi-colons."
-              },
-              "uniconPath": {
-                "type": "string"
-              },
-              "host": {
-                "type": "string",
-                "description": "The hostname to connect to."
+                "description": "Args for program file.",
+                "default": ""
               }
             }
           }
@@ -81,7 +62,7 @@
             "type": "unicon-debugger",
             "request": "launch",
             "name": "Launch in Unicon",
-            "program": "^\"\\${file}\"",
+            "program": "${file}",
             "stopOnEntry": true
           }
         ]
@@ -91,13 +72,17 @@
       "type": "object",
       "title": "Unicon Debugger",
       "properties": {
-        "unicon-debugger.emuliciousPath": {
+        "unicon-debugger.uniconPath": {
           "type": "string",
           "default": ""
         },
         "unicon-debugger.maxAttempts": {
           "type": "number",
           "default": 25
+        },
+        "unicon-debugger.args": {
+          "type": "string",
+          "default": ""
         }
       }
     }
