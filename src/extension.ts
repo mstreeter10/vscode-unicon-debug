@@ -25,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	}, vscode.DebugConfigurationProviderTriggerKind.Dynamic));
 
-	unicon = child_process.spawn("udap", [ "--socket", DEFAULT_PORT.toString() ]);
+	unicon = child_process.spawn("udb", [ "-adapter", DEFAULT_PORT.toString() ]);
 	unicon.stdout.on('data', (data) => {
 		console.log(`${data}`);
 	});
@@ -33,7 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
 		console.error(`${data}`);
 	});
 	unicon.on('close', (code) => {
-		console.log(`udap exited with code ${code}`);
+		console.log(`udb exited with code ${code}`);
 	});
 
 	const factory = new UniconDebugAdapterFactory();
