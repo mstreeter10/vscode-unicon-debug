@@ -5,7 +5,7 @@ import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken 
 import * as child_process from 'child_process';
 
 let DEFAULT_PORT: number;
-let unicon: child_process.ChildProcessWithoutNullStreams;
+let adapterfactory: child_process.ChildProcessWithoutNullStreams;
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -25,15 +25,15 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	}, vscode.DebugConfigurationProviderTriggerKind.Dynamic));
 
-	unicon = child_process.spawn("udb", [ "-adapter", DEFAULT_PORT.toString() ]);
-	unicon.stdout.on('data', (data) => {
+	adapterfactory = child_process.spawn("adapterfactory", [ DEFAULT_PORT.toString() ]);
+	adapterfactory.stdout.on('data', (data) => {
 		console.log(`${data}`);
 	});
-	unicon.stderr.on('data', (data) => {
+	adapterfactory.stderr.on('data', (data) => {
 		console.error(`${data}`);
 	});
-	unicon.on('close', (code) => {
-		console.log(`udb exited with code ${code}`);
+	adapterfactory.on('close', (code) => {
+		console.log(`adapterfactory exited with code ${code}`);
 	});
 
 	const factory = new UniconDebugAdapterFactory();
@@ -46,7 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
 	const kill = require('kill-port')
 	kill(DEFAULT_PORT, 'tcp')
-	unicon.kill();
+	adapterfactory.kill();
 }
 
 class UniconDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
