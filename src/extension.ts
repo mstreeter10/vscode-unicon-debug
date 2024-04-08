@@ -25,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	}, vscode.DebugConfigurationProviderTriggerKind.Dynamic));
 
-	adapterfactory = child_process.spawn("adapterfactory", [ DEFAULT_PORT.toString() ]);
+	adapterfactory = child_process.spawn("udb", [ "--adapterfactory", DEFAULT_PORT.toString() ]);
 	adapterfactory.stdout.on('data', (data) => {
 		console.log(`${data}`);
 	});
