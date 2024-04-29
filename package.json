@@ -3,28 +3,27 @@
   "displayName": "Unicon Debugger",
   "description": "UDB Debugger for Unicon",
   "author": "Unicon UDAP Team",
-	"license": "MIT",
-	"version": "0.6.0",
-	"publisher": "jafar",
+  "license": "MIT",
+  "version": "0.6.0",
+  "publisher": "jafar",
   "engines": {
     "vscode": "^1.82.0"
   },
   "categories": [
     "Debuggers"
   ],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/Jafaral/vscode-unicon-debug.git"
-	},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jafaral/vscode-unicon-debug.git"
+  },
   "activationEvents": [
-    "onDebug",
-    "onDebugDynamicConfigurations:unicon-debugger"
+    "onDebug"
   ],
   "keywords" : [
-		"Unicon",
-		"Icon",
-		"SNOBOL"
-	],
+    "Unicon",
+    "Icon",
+    "SNOBOL"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [],
@@ -56,15 +55,21 @@
                 "description": "Absolute path to a program file.",
                 "default": "${file}"
               },
-              "stopOnEntry": {
-                "type": "boolean",
-                "description": "Automatically stop after launch.",
-                "default": true
-              },
               "args": {
                 "type": "string",
                 "description": "Args for program file.",
                 "default": ""
+              },
+              "port": {
+                "type": "integer",
+                "description": "Port to communicate on for debug adapter protocol."
+              },
+              "customAdapterInstance": {
+                "type": "boolean",
+                "description": [
+                  "Used to specify whether VSCode should launch a new default adapter instance for each debugging session.",
+                  "If true, VSCode will not create a new adapter instance, and assume there is an already running adapter instance on some port and connect to it."
+                ]
               }
             }
           }
@@ -74,8 +79,7 @@
             "type": "unicon-debugger",
             "request": "launch",
             "name": "Launch in Unicon",
-            "program": "${file}",
-            "stopOnEntry": true
+            "program": "${file}"
           }
         ]
       }
@@ -95,6 +99,12 @@
         "unicon-debugger.args": {
           "type": "string",
           "default": ""
+        },
+        "unicon-debugger.port": {
+          "type": "integer"
+        },
+        "unicon-debugger.customAdapterInstance": {
+          "type": "boolean"
         }
       }
     }
